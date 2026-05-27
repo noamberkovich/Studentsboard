@@ -2,10 +2,8 @@
 
 A bilingual (Hebrew / English) student productivity dashboard built with vanilla HTML, CSS, and JavaScript. Tasks, exams, weekly schedule, friends leaderboard, calendar export, and local account storage — no backend required.
 
-## Live demo
+https://studentsboard.netlify.app/
 
-> Add your deployed URL here after publishing (e.g. Netlify).  
-> Example: `https://your-site.netlify.app`
 
 ## Features
 
