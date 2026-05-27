@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <title data-i18n="pageTitle">לוח משימות</title>
+  <script>
+    (function () {
+      var theme = localStorage.getItem('student-dashboard-theme') || 'light';
+      var accent = localStorage.getItem('student-dashboard-accent') || 'blue';
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.dataset.accent = accent;
+      document.documentElement.classList.add('app-booting');
+    })();
+  </script>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="auth-mode">
+  <div id="authScreen" class="auth-screen">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" class="lang-btn active" data-lang="he">עברית</button>
+          <button type="button" class="lang-btn" data-lang="en">English</button>
+        </div>
+      </div>
+
+      <div id="loginPanel" class="auth-panel">
+        <h1 class="auth-title" data-i18n="authLogin">התחברות</h1>
+        <form id="loginForm" class="auth-form">
+          <div class="form-group">
+            <label for="loginUsername" data-i18n="authUsername">שם משתמש</label>
+            <input type="text" id="loginUsername" required autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label for="loginPassword" data-i18n="authPassword">סיסמה</label>
+            <div class="password-input-wrap">
+              <input type="password" id="loginPassword" required autocomplete="current-password">
+              <button type="button" class="password-toggle-btn" aria-label="הצג סיסמה" aria-pressed="false">👁</button>
+            </div>
+          </div>
+          <p class="form-error" id="loginError" hidden></p>
+          <button type="submit" class="btn btn-primary btn-block" data-i18n="authLogin">התחברות</button>
+        </form>
+        <p class="auth-storage-notice" role="note">
+          <span class="auth-storage-notice-icon" aria-hidden="true">ℹ️</span>
+          <span data-i18n="authStorageNotice">כרגע החשבון נשמר רק במכשיר ובדפדפן הזה.</span>
+        </p>
+        <p class="auth-storage-notice-hint form-hint" data-i18n="authStorageNoticeHint">אם תיכנסו ממכשיר אחר, תצטרכו ליצור חשבון חדש.</p>
+        <div class="auth-panel-actions">
+          <button type="button" class="btn btn-secondary btn-block" id="previewWorkspaceBtn" data-i18n="previewWorkspace">כניסה בלי יצירת חשבון</button>
+          <button type="button" class="btn btn-secondary btn-block" id="showSignupBtn" data-i18n="authCreateAccount">צור חשבון</button>
+        </div>
+      </div>
+
+      <div id="signupPanel" class="auth-panel" hidden>
+        <h1 class="auth-title" data-i18n="authCreateAccount">צור חשבון</h1>
+        <form id="signupForm" class="auth-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="signupFirstName" data-i18n="authFirstName">שם פרטי</label>
+              <input type="text" id="signupFirstName" required autocomplete="given-name">
+            </div>
+            <div class="form-group">
+              <label for="signupLastName" data-i18n="authLastName">שם משפחה</label>
+              <input type="text" id="signupLastName" required autocomplete="family-name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="signupProfileImage" data-i18n="authProfileImage">תמונת פרופיל (אופציונלי)</label>
+            <input type="file" id="signupProfileImage" accept="image/*">
+            <p class="form-hint" data-i18n="imageHint">עד 800KB · נשמר במכשיר</p>
+          </div>
+          <div class="image-preview auth-image-preview" id="signupImagePreview" hidden>
+            <img id="signupImagePreviewImg" alt="">
+            <button type="button" class="preview-remove" id="signupImagePreviewRemove" data-i18n="removeFriendImage">הסרת תמונה</button>
+          </div>
+          <div class="form-group">
+            <label for="signupEmail" data-i18n="authEmail">מייל</label>
+            <input type="email" id="signupEmail" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="signupUsername" data-i18n="authUsername">שם משתמש</label>
+            <input type="text" id="signupUsername" required autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label for="signupPassword" data-i18n="authPassword">סיסמה</label>
+            <div class="password-input-wrap">
+              <input type="password" id="signupPassword" required autocomplete="new-password">
+              <button type="button" class="password-toggle-btn" aria-label="הצג סיסמה" aria-pressed="false">👁</button>
+            </div>
+          </div>
+          <p class="form-error" id="signupError" hidden></p>
+          <button type="submit" class="btn btn-primary btn-block" data-i18n="authCreateAccount">צור חשבון</button>
+        </form>
+        <p class="auth-storage-notice" role="note">
+          <span class="auth-storage-notice-icon" aria-hidden="true">ℹ️</span>
+          <span data-i18n="authStorageNotice">כרגע החשבון נשמר רק במכשיר ובדפדפן הזה.</span>
+        </p>
+        <p class="auth-storage-notice-hint form-hint" data-i18n="authStorageNoticeHint">אם תיכנסו ממכשיר אחר, תצטרכו ליצור חשבון חדש.</p>
+        <div class="auth-panel-actions auth-panel-actions--single">
+          <button type="button" class="btn btn-secondary btn-block" id="showLoginBtn" data-i18n="authBackToLogin">חזרה להתחברות</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="dashboardApp" hidden>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-datetime">
+        <div class="topbar-info">
+          <span class="topbar-label" data-i18n="dateLabel">תאריך</span>
+          <span id="todayDate"></span>
+        </div>
+        <div class="topbar-info">
+          <span class="topbar-label" data-i18n="timeLabel">שעה</span>
+          <span id="currentTime"></span>
+        </div>
+      </div>
+      <div class="user-profile" id="userProfile">
+        <div class="user-profile-avatar" id="userProfileAvatar" aria-hidden="true">
+          <img id="userProfileImage" class="user-profile-img" alt="" hidden>
+          <span id="userProfileInitial" class="user-profile-initial"></span>
+        </div>
+        <div class="user-profile-names">
+          <span id="userFirstName" class="user-profile-first"></span>
+          <span id="userLastName" class="user-profile-last"></span>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="logoutBtn" data-i18n="authLogout" hidden aria-hidden="true" tabindex="-1">התנתקות</button>
+      </div>
+      <div class="topbar-actions">
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" class="lang-btn active" data-lang="he">עברית</button>
+          <button type="button" class="lang-btn" data-lang="en">English</button>
+        </div>
+        <div class="appearance-wrap">
+          <button type="button" class="appearance-btn" id="appearanceBtn" aria-expanded="false" aria-controls="appearancePanel">
+            <span class="appearance-icon" id="appearanceIcon" aria-hidden="true">☀</span>
+            <span data-i18n="appearanceLabel">מצב תצוגה</span>
+          </button>
+          <div class="appearance-panel" id="appearancePanel" hidden>
+            <h3 class="appearance-title" data-i18n="settingsTitle">הגדרות תצוגה</h3>
+            <p class="appearance-section-label" data-i18n="themeModeLabel">מצב</p>
+            <div class="theme-toggle" role="group">
+              <button type="button" class="theme-btn active" data-theme="light" data-i18n="themeLight">בהיר</button>
+              <button type="button" class="theme-btn" data-theme="dark" data-i18n="themeDark">כהה</button>
+            </div>
+            <p class="appearance-section-label" data-i18n="accentLabel">צבע ראשי</p>
+            <div class="accent-picker" role="group" aria-label="Accent color">
+              <button type="button" class="accent-swatch" data-accent="purple" style="--swatch:#9333ea" aria-label="Purple"></button>
+              <button type="button" class="accent-swatch" data-accent="pink" style="--swatch:#ec4899" aria-label="Pink"></button>
+              <button type="button" class="accent-swatch active" data-accent="blue" style="--swatch:#2563eb" aria-label="Blue"></button>
+              <button type="button" class="accent-swatch" data-accent="green" style="--swatch:#16a34a" aria-label="Green"></button>
+              <button type="button" class="accent-swatch" data-accent="orange" style="--swatch:#ea580c" aria-label="Orange"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="sidebar" id="tasksSidebar">
+        <h2 class="sidebar-title" data-i18n="coursesTitle">קורסים</h2>
+        <ul class="sidebar-list" id="categoryList"></ul>
+      </aside>
+
+      <main class="board">
+        <section id="tasksView">
+          <div class="board-header">
+            <div class="board-header-row">
+              <h1 class="board-title" data-i18n="tasksTitle">משימות</h1>
+              <div class="board-header-actions">
+                <button type="button" class="btn btn-secondary btn-sm" id="calendarBtn" data-i18n="calendarBtn">לוח שנה</button>
+                <span class="board-count" id="taskCount"></span>
+              </div>
+            </div>
+            <div class="filter-bar" id="filterBar">
+              <span class="filter-indicator" aria-hidden="true"></span>
+              <button type="button" class="filter-btn active" data-status="all" data-i18n="filterAll">הכל</button>
+              <button type="button" class="filter-btn" data-status="urgent" data-i18n="filterUrgent">דחוף</button>
+              <button type="button" class="filter-btn" data-status="today" data-i18n="filterToday">היום</button>
+              <button type="button" class="filter-btn" data-status="week" data-i18n="filterWeek">השבוע</button>
+              <button type="button" class="filter-btn" data-status="done" data-i18n="filterDone">בוצע</button>
+            </div>
+          </div>
+          <div class="stats-widget-area" id="statsWidgetArea">
+            <button type="button" class="stats-add-btn" id="statsAddBtn" hidden>
+              <span data-i18n="statsAddWidget">הוספת ווידג׳ט סטטיסטיקה</span>
+            </button>
+            <div class="stats-widget-card" id="statsWidgetCard" hidden>
+              <div class="stats-widget-header">
+                <h2 class="stats-widget-title" data-i18n="statsTitle">סטטיסטיקה</h2>
+                <div class="stats-widget-controls">
+                  <button type="button" class="stats-ctrl-btn" id="statsToggleTypeBtn" data-i18n="statsSwitchType">החלף תצוגה</button>
+                  <button type="button" class="stats-ctrl-btn" id="statsToggleVisibleBtn" data-i18n="statsHide">הסתר</button>
+                  <button type="button" class="stats-ctrl-btn stats-ctrl-remove" id="statsRemoveBtn" aria-label="Remove">&times;</button>
+                </div>
+              </div>
+              <div class="stats-widget-body" id="statsWidgetBody"></div>
+            </div>
+            <button type="button" class="stats-collapsed-btn" id="statsShowBtn" hidden>
+              <span data-i18n="statsShow">הצג סטטיסטיקה</span>
+            </button>
+          </div>
+          <ul class="task-list" id="taskList"></ul>
+          <div class="empty-state-block" id="tasksEmptyBlock">
+            <p class="empty-state" id="emptyState" data-i18n="emptyState">אין משימות להצגה</p>
+            <button type="button" class="btn btn-primary empty-state-btn" id="emptyAddTaskBtn" data-i18n="emptyAddTask">הוספת משימה ראשונה</button>
+          </div>
+        </section>
+
+        <section id="examsView" hidden>
+          <div class="board-header">
+            <div class="board-header-row">
+              <h1 class="board-title" data-i18n="examsTitle">מבחנים</h1>
+              <div class="board-header-actions">
+                <button type="button" class="btn btn-secondary btn-sm" id="examsCalendarBtn" data-i18n="calendarBtn">לוח שנה</button>
+                <span class="board-count" id="examsCount"></span>
+              </div>
+            </div>
+          </div>
+          <ul class="exam-list" id="examList"></ul>
+          <div class="empty-state-block" id="examsEmptyBlock">
+            <p class="empty-state" id="examsEmptyState" data-i18n="examsEmpty">אין מבחנים עדיין</p>
+            <button type="button" class="btn btn-primary empty-state-btn" id="emptyAddExamBtn" data-i18n="emptyAddExam">הוספת מבחן ראשון</button>
+          </div>
+        </section>
+
+        <section id="scheduleView" class="schedule-view" hidden>
+          <div class="board-header">
+            <div class="board-header-row">
+              <h1 class="board-title" data-i18n="scheduleTitle">מערכת שעות</h1>
+              <div class="board-header-actions">
+                <button type="button" class="btn btn-primary btn-sm" id="scheduleAddCourseBtn" data-i18n="scheduleAddCourse">הוספת קורס</button>
+              </div>
+            </div>
+          </div>
+          <div class="schedule-timetable-scroll" aria-label="Weekly schedule">
+            <div class="schedule-grid" id="scheduleGrid"></div>
+          </div>
+          <div class="empty-state-block" id="scheduleEmptyBlock">
+            <p class="empty-state" data-i18n="scheduleEmpty">אין קורסים במערכת השעות</p>
+            <button type="button" class="btn btn-primary empty-state-btn" id="emptyAddCourseBtn" data-i18n="emptyAddCourse">הוספת קורס ראשון</button>
+          </div>
+        </section>
+
+        <section id="friendsView" hidden>
+          <div class="board-header">
+            <div class="board-header-row">
+              <h1 class="board-title" data-i18n="friendsTitle">חברים</h1>
+              <span class="board-count" id="friendsCount"></span>
+            </div>
+          </div>
+          <p class="friends-data-note form-hint" id="friendsDataNote" data-i18n="friendActivityDisclaimer" hidden>נתוני החברים מוצגים לצורך תצוגה מקומית בלבד.</p>
+          <section class="friends-leaderboard" id="friendsLeaderboard" hidden aria-labelledby="friendsLeaderboardTitle">
+            <h2 class="friends-leaderboard-title" id="friendsLeaderboardTitle" data-i18n="friendLeaderboardTitle">דירוג התקדמות</h2>
+            <ol class="friends-leaderboard-list" id="friendsLeaderboardList"></ol>
+          </section>
+          <ul class="friends-list" id="friendsList"></ul>
+          <section class="friends-activity-feed" id="friendsActivityFeed" hidden aria-labelledby="friendsActivityFeedTitle">
+            <h2 class="friends-activity-feed-title" id="friendsActivityFeedTitle" data-i18n="friendActivityFeedTitle">עדכונים אחרונים</h2>
+            <ul class="friends-activity-feed-list" id="friendsActivityFeedList"></ul>
+          </section>
+          <div class="empty-state-block" id="friendsEmptyBlock">
+            <p class="empty-state" id="friendsEmptyState" data-i18n="friendsEmpty">אין חברים עדיין</p>
+            <button type="button" class="btn btn-primary empty-state-btn" id="emptyAddFriendBtn" data-i18n="emptyAddFriend">הוספת חבר ראשון</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Task modal -->
+  <div class="modal-overlay" id="taskModalOverlay" hidden>
+    <div class="modal" role="dialog" aria-labelledby="taskModalTitle" aria-modal="true">
+      <div class="modal-header">
+        <h2 id="taskModalTitle" data-i18n="modalTitle">משימה חדשה</h2>
+        <button type="button" class="modal-close" id="taskModalClose" aria-label="Close">&times;</button>
+      </div>
+      <form id="taskForm" class="modal-form">
+        <div class="form-group">
+          <label for="taskTitle" data-i18n="labelTitle">שם המשימה</label>
+          <input type="text" id="taskTitle" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="taskDue" data-i18n="labelDue">תאריך יעד</label>
+          <input type="date" id="taskDue" lang="en-GB">
+          <label class="checkbox-row task-no-due-row">
+            <input type="checkbox" id="taskNoDue">
+            <span data-i18n="taskNoDueLabel">משימה כללית</span>
+          </label>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="taskUrgency" data-i18n="labelUrgency">דחיפות</label>
+            <select id="taskUrgency" required></select>
+          </div>
+          <div class="form-group">
+            <label for="taskDifficulty" data-i18n="labelDifficulty">קושי</label>
+            <select id="taskDifficulty" required></select>
+          </div>
+        </div>
+        <fieldset class="category-fieldset">
+          <legend data-i18n="labelCategory">קורס</legend>
+          <p class="form-hint category-hint" id="categoryHint" data-i18n="categoryHint">בחר קורס קיים או צור קורס חדש</p>
+          <div class="form-group">
+            <label for="taskCategory" data-i18n="labelCategory">קורס</label>
+            <select id="taskCategory"></select>
+          </div>
+          <div class="form-group">
+            <label for="newCategory" data-i18n="labelNewCategory">קורס חדש (אופציונלי)</label>
+            <input type="text" id="newCategory" autocomplete="off">
+          </div>
+        </fieldset>
+        <div class="reminder-row">
+          <label class="checkbox-row reminder-toggle-row">
+            <input type="checkbox" id="taskReminder">
+            <span data-i18n="reminderLabel">תזכורת</span>
+          </label>
+          <button type="button" class="reminder-gear-btn" id="taskReminderSettingsBtn" hidden aria-label="">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 7v5l3 2"></path>
+            </svg>
+          </button>
+          <span class="reminder-summary" id="taskReminderSummary" hidden></span>
+        </div>
+        <fieldset class="form-attachments">
+          <legend data-i18n="attachmentsLegend">קבצים מצורפים (אופציונלי)</legend>
+          <div class="form-group">
+            <label for="taskLink" data-i18n="labelLink">קישור</label>
+            <input type="url" id="taskLink" placeholder="https://..." autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="taskImageFile" data-i18n="labelImage">צירוף קובץ</label>
+            <input type="file" id="taskImageFile" accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,application/pdf">
+            <p class="form-hint" data-i18n="fileHint">עד 3MB · תמונה, PDF, Word, PowerPoint · נשמר במכשיר</p>
+          </div>
+          <div class="image-preview" id="imagePreview" hidden>
+            <img id="imagePreviewImg" alt="">
+          </div>
+          <div class="file-preview-card" id="filePreviewCard" hidden>
+            <span class="file-preview-icon" aria-hidden="true">📄</span>
+            <div class="file-preview-meta">
+              <span class="file-preview-name" id="filePreviewName"></span>
+              <span class="file-preview-type" id="filePreviewType"></span>
+            </div>
+          </div>
+          <button type="button" class="preview-remove" id="imagePreviewRemove" data-i18n="removeImage" hidden>הסרת קובץ</button>
+          <p class="form-error" id="imageError" hidden></p>
+        </fieldset>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="taskModalCancel" data-i18n="btnCancel">ביטול</button>
+          <button type="submit" class="btn btn-primary" data-i18n="btnSave">שמירה</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Reminder settings sheet -->
+  <div class="modal-overlay reminder-sheet-overlay" id="reminderSheetOverlay" hidden>
+    <div class="reminder-sheet" role="dialog" aria-labelledby="reminderSheetTitle" aria-modal="true">
+      <div class="reminder-sheet-handle" aria-hidden="true"></div>
+      <div class="reminder-sheet-header">
+        <h3 id="reminderSheetTitle" data-i18n="reminderChooseTime">בחר זמן תזכורת</h3>
+        <button type="button" class="modal-close reminder-sheet-close" id="reminderSheetClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="reminder-picker" id="reminderPicker">
+        <button type="button" class="reminder-picker-option" data-reminder-type="hours">
+          <span data-i18n="reminderHoursBefore">כמה שעות לפני</span>
+        </button>
+        <div class="reminder-hours-grid" id="reminderHoursGrid" hidden>
+          <button type="button" class="reminder-hour-option" data-reminder-hours="1">1</button>
+          <button type="button" class="reminder-hour-option" data-reminder-hours="2">2</button>
+          <button type="button" class="reminder-hour-option" data-reminder-hours="3">3</button>
+          <button type="button" class="reminder-hour-option" data-reminder-hours="6">6</button>
+          <button type="button" class="reminder-hour-option" data-reminder-hours="12">12</button>
+        </div>
+        <button type="button" class="reminder-picker-option" data-reminder-type="day">
+          <span data-i18n="reminderOneDayBefore">יום לפני</span>
+        </button>
+        <button type="button" class="reminder-picker-option" data-reminder-type="week">
+          <span data-i18n="reminderOneWeekBefore">שבוע לפני</span>
+        </button>
+      </div>
+      <button type="button" class="btn btn-primary reminder-sheet-done" id="reminderSheetDone" data-i18n="btnSave">שמירה</button>
+    </div>
+  </div>
+
+  <!-- Friend modal -->
+  <div class="modal-overlay" id="friendModalOverlay" hidden>
+    <div class="modal" role="dialog" aria-labelledby="friendModalTitle" aria-modal="true">
+      <div class="modal-header">
+        <h2 id="friendModalTitle" data-i18n="friendModalAdd">הוספת חבר</h2>
+        <button type="button" class="modal-close" id="friendModalClose" aria-label="Close">&times;</button>
+      </div>
+      <form id="friendForm" class="modal-form">
+        <div class="form-group">
+          <label for="friendName" data-i18n="labelFriendName">שם</label>
+          <input type="text" id="friendName" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="friendImageFile" data-i18n="labelFriendImage">תמונת פרופיל</label>
+          <input type="file" id="friendImageFile" accept="image/*">
+          <p class="form-hint" data-i18n="imageHint">עד 800KB · נשמר במכשיר</p>
+        </div>
+        <div class="image-preview" id="friendImagePreview" hidden>
+          <img id="friendImagePreviewImg" alt="">
+          <button type="button" class="preview-remove" id="friendImagePreviewRemove" data-i18n="removeFriendImage">הסרת תמונה</button>
+        </div>
+        <p class="form-error" id="friendImageError" hidden></p>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="friendTotalTasks" data-i18n="labelTotalTasks">סה״כ משימות</label>
+            <input type="number" id="friendTotalTasks" min="0" value="0" required>
+          </div>
+          <div class="form-group">
+            <label for="friendCompletedTasks" data-i18n="labelCompletedTasks">משימות שהושלמו</label>
+            <input type="number" id="friendCompletedTasks" min="0" value="0" required>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="friendModalCancel" data-i18n="btnCancel">ביטול</button>
+          <button type="submit" class="btn btn-primary" data-i18n="btnSave">שמירה</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Exam modal -->
+  <div class="modal-overlay" id="examModalOverlay" hidden>
+    <div class="modal" role="dialog" aria-labelledby="examModalTitle" aria-modal="true">
+      <div class="modal-header">
+        <h2 id="examModalTitle" data-i18n="examModalAdd">הוספת מבחן</h2>
+        <button type="button" class="modal-close" id="examModalClose" aria-label="Close">&times;</button>
+      </div>
+      <form id="examForm" class="modal-form">
+        <div class="form-group">
+          <label for="examCourse" data-i18n="labelExamCourse">קורס</label>
+          <input type="text" id="examCourse" list="examCourseList" required autocomplete="off">
+          <datalist id="examCourseList"></datalist>
+        </div>
+        <div class="form-group">
+          <label for="examTitle" data-i18n="labelExamTitle">שם המבחן</label>
+          <input type="text" id="examTitle" required autocomplete="off">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="examDate" data-i18n="labelExamDate">תאריך</label>
+            <input type="date" id="examDate" required lang="en-GB">
+          </div>
+          <div class="form-group">
+            <label for="examType" data-i18n="labelExamType">מועד</label>
+            <select id="examType" required></select>
+          </div>
+        </div>
+        <fieldset class="form-attachments">
+          <legend data-i18n="examFilesLegend">קבצים מצורפים (אופציונלי)</legend>
+          <div class="form-group">
+            <label for="examFilesInput" data-i18n="labelImage">צירוף קובץ</label>
+            <input type="file" id="examFilesInput" accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,application/pdf" multiple>
+            <p class="form-hint" data-i18n="examFilesHint">עד 3MB לקובץ · תמונה, PDF, Word, PowerPoint</p>
+          </div>
+          <ul class="exam-files-list" id="examPendingFiles"></ul>
+          <p class="form-error" id="examFileError" hidden></p>
+        </fieldset>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="examModalCancel" data-i18n="btnCancel">ביטול</button>
+          <button type="submit" class="btn btn-primary" data-i18n="btnSave">שמירה</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Schedule course modal -->
+  <div class="modal-overlay" id="scheduleCourseModalOverlay" hidden>
+    <div class="modal schedule-course-modal" role="dialog" aria-labelledby="scheduleCourseModalTitle" aria-modal="true">
+      <div class="modal-header">
+        <h2 id="scheduleCourseModalTitle">הוספת קורס</h2>
+        <button type="button" class="modal-close" id="scheduleCourseModalClose" aria-label="Close">&times;</button>
+      </div>
+      <form id="scheduleCourseForm" class="modal-form">
+        <div class="form-group">
+          <label for="scheduleCourseName" data-i18n="scheduleCourseName">שם קורס</label>
+          <input type="text" id="scheduleCourseName" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="scheduleCourseDay" data-i18n="scheduleDay">יום</label>
+          <select id="scheduleCourseDay" required></select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="scheduleCourseStartTime" data-i18n="scheduleStartTime">שעת התחלה</label>
+            <div class="schedule-time-input" id="scheduleCourseStartTime" data-schedule-time-input dir="ltr" role="group"></div>
+          </div>
+          <div class="form-group">
+            <label for="scheduleCourseEndTime" data-i18n="scheduleEndTime">שעת סיום</label>
+            <div class="schedule-time-input" id="scheduleCourseEndTime" data-schedule-time-input dir="ltr" role="group"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <span class="form-label" id="scheduleColorLabel" data-i18n="scheduleColor">צבע</span>
+          <div class="schedule-color-picker" id="scheduleColorPicker" role="group" aria-labelledby="scheduleColorLabel"></div>
+        </div>
+        <p class="form-error" id="scheduleCourseError" hidden></p>
+        <div class="modal-actions schedule-modal-actions">
+          <button type="button" class="btn btn-danger btn-sm" id="scheduleDeleteCourseBtn" data-i18n="scheduleDeleteCourse" hidden>מחיקת קורס</button>
+          <div class="schedule-modal-actions-end">
+            <button type="button" class="btn btn-secondary" id="scheduleCourseModalCancel" data-i18n="btnCancel">ביטול</button>
+            <button type="submit" class="btn btn-primary" data-i18n="btnSave">שמירה</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Settings modal -->
+  <div class="modal-overlay settings-modal-overlay" id="settingsModalOverlay" hidden>
+    <div class="modal settings-modal" role="dialog" aria-labelledby="settingsModalTitle" aria-modal="true">
+      <div class="modal-header">
+        <h2 id="settingsModalTitle" data-i18n="settingsPageTitle">הגדרות</h2>
+        <button type="button" class="modal-close" id="settingsModalClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="settings-modal-body">
+        <section class="settings-section">
+          <h3 class="settings-section-title" data-i18n="settingsAccountMgmt">ניהול חשבון</h3>
+
+          <form id="settingsProfileForm" class="settings-form">
+            <fieldset class="settings-fieldset">
+              <legend data-i18n="settingsChangeName">שינוי שם</legend>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="settingsFirstName" data-i18n="authFirstName">שם פרטי</label>
+                  <input type="text" id="settingsFirstName" required autocomplete="given-name">
+                </div>
+                <div class="form-group">
+                  <label for="settingsLastName" data-i18n="authLastName">שם משפחה</label>
+                  <input type="text" id="settingsLastName" required autocomplete="family-name">
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="settings-fieldset">
+              <legend data-i18n="settingsChangeProfileImage">שינוי תמונת פרופיל</legend>
+              <div class="form-group">
+                <label for="settingsProfileImage" data-i18n="authProfileImage">תמונת פרופיל (אופציונלי)</label>
+                <input type="file" id="settingsProfileImage" accept="image/*">
+                <p class="form-hint" data-i18n="imageHint">עד 800KB · נשמר במכשיר</p>
+              </div>
+              <div class="image-preview settings-image-preview" id="settingsImagePreview" hidden>
+                <img id="settingsImagePreviewImg" alt="">
+                <button type="button" class="preview-remove" id="settingsImagePreviewRemove" data-i18n="removeFriendImage">הסרת תמונה</button>
+              </div>
+            </fieldset>
+
+            <p class="form-error" id="settingsProfileError" hidden></p>
+            <button type="submit" class="btn btn-primary" data-i18n="settingsSaveProfile">שמירת פרופיל</button>
+          </form>
+
+          <form id="settingsPasswordForm" class="settings-form">
+            <fieldset class="settings-fieldset">
+              <legend data-i18n="settingsChangePassword">שינוי סיסמה</legend>
+              <div class="form-group">
+                <label for="settingsCurrentPassword" data-i18n="settingsCurrentPassword">סיסמה נוכחית</label>
+                <div class="password-input-wrap">
+                  <input type="password" id="settingsCurrentPassword" autocomplete="current-password">
+                  <button type="button" class="password-toggle-btn" aria-label="הצג סיסמה" aria-pressed="false">👁</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="settingsNewPassword" data-i18n="settingsNewPassword">סיסמה חדשה</label>
+                <div class="password-input-wrap">
+                  <input type="password" id="settingsNewPassword" autocomplete="new-password">
+                  <button type="button" class="password-toggle-btn" aria-label="הצג סיסמה" aria-pressed="false">👁</button>
+                </div>
+              </div>
+            </fieldset>
+            <p class="form-error" id="settingsPasswordError" hidden></p>
+            <button type="submit" class="btn btn-secondary" data-i18n="settingsUpdatePassword">עדכון סיסמה</button>
+          </form>
+        </section>
+
+        <section class="settings-section">
+          <h3 class="settings-section-title" data-i18n="calendarExportTitle">ייצוא ללוח שנה</h3>
+          <p class="form-hint" data-i18n="calendarExportHelp">יומן באייפון / Apple Calendar ולייבוא ל-Google Calendar.</p>
+          <button type="button" class="btn btn-secondary" id="settingsCalendarExportBtn" data-i18n="calendarExportButton" data-i18n-aria="calendarExportAdd">ייצוא משימות ומבחנים</button>
+          <p class="form-hint calendar-export-note" data-i18n="calendarExportNote">זה ייצוא חד־פעמי. אם שינית משימות או מבחנים, צריך לייצא שוב.</p>
+        </section>
+
+        <section class="settings-section">
+          <h3 class="settings-section-title" data-i18n="settingsTitle">הגדרות תצוגה</h3>
+          <p class="appearance-section-label" data-i18n="themeModeLabel">מצב</p>
+          <div class="theme-toggle" role="group">
+            <button type="button" class="theme-btn" data-theme="light" data-i18n="themeLight">בהיר</button>
+            <button type="button" class="theme-btn" data-theme="dark" data-i18n="themeDark">כהה</button>
+          </div>
+          <p class="appearance-section-label" data-i18n="accentLabel">צבע ראשי</p>
+          <div class="accent-picker" role="group" aria-label="Accent color">
+            <button type="button" class="accent-swatch" data-accent="purple" style="--swatch:#9333ea" aria-label="Purple"></button>
+            <button type="button" class="accent-swatch" data-accent="pink" style="--swatch:#ec4899" aria-label="Pink"></button>
+            <button type="button" class="accent-swatch" data-accent="blue" style="--swatch:#2563eb" aria-label="Blue"></button>
+            <button type="button" class="accent-swatch" data-accent="green" style="--swatch:#16a34a" aria-label="Green"></button>
+            <button type="button" class="accent-swatch" data-accent="orange" style="--swatch:#ea580c" aria-label="Orange"></button>
+          </div>
+        </section>
+
+        <div class="settings-actions">
+          <button type="button" class="btn btn-secondary" id="resetPreviewWorkspaceBtn" data-i18n="resetPreviewWorkspace" hidden>איפוס סביבת תצוגה</button>
+          <button type="button" class="btn btn-secondary" id="settingsLogoutBtn" data-i18n="authLogout">התנתקות</button>
+          <button type="button" class="btn btn-danger" id="settingsDeleteAccountBtn" data-i18n="settingsDeleteAccount">מחיקת חשבון</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar modal -->
+  <div class="modal-overlay calendar-overlay calendar-modal-overlay" id="calendarModalOverlay" hidden>
+    <div class="modal calendar-modal" role="dialog" aria-labelledby="calendarModalTitle" aria-modal="true">
+      <div class="modal-header calendar-modal-header">
+        <h2 id="calendarModalTitle" data-i18n="calendarTitle">לוח שנה</h2>
+        <button type="button" class="modal-close" id="calendarModalClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="calendar-body">
+        <div class="calendar-nav">
+          <button type="button" class="calendar-nav-btn" id="calendarPrevBtn" aria-label="Previous month">&#8249;</button>
+          <h3 class="calendar-month-label" id="calendarMonthLabel">&nbsp;</h3>
+          <button type="button" class="calendar-nav-btn" id="calendarNextBtn" aria-label="Next month">&#8250;</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="calendarTodayBtn" data-i18n="calendarToday">היום</button>
+        </div>
+        <div class="calendar-weekdays" id="calendarWeekdays"></div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+        <div class="calendar-day-panel">
+          <h3 class="calendar-day-title" id="calendarDayTitle">&nbsp;</h3>
+          <div class="calendar-day-section" id="calendarTasksSection">
+            <h4 class="calendar-section-title" data-i18n="calendarTasksSection">משימות</h4>
+            <ul class="task-list calendar-day-list" id="calendarDayList"></ul>
+          </div>
+          <div class="calendar-day-section" id="calendarExamsSection">
+            <h4 class="calendar-section-title" data-i18n="calendarExamsSection">מבחנים</h4>
+            <ul class="exam-list calendar-day-list" id="calendarDayExamsList"></ul>
+          </div>
+          <p class="empty-state calendar-day-empty" id="calendarDayEmpty" data-i18n="calendarNoItems">אין פריטים ביום זה</p>
+        </div>
+        <section class="calendar-export">
+          <h4 class="calendar-export-title" data-i18n="calendarExportTitle">ייצוא ללוח שנה</h4>
+          <p class="calendar-export-help" data-i18n="calendarExportHelp">יומן באייפון / Apple Calendar ולייבוא ל-Google Calendar.</p>
+          <button type="button" class="btn btn-secondary btn-block" id="calendarExportBtn" data-i18n="calendarExportButton" data-i18n-aria="calendarExportAdd">ייצוא משימות ומבחנים</button>
+          <p class="form-hint calendar-export-note" data-i18n="calendarExportNote">זה ייצוא חד־פעמי. אם שינית משימות או מבחנים, צריך לייצא שוב.</p>
+        </section>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <button type="button" class="fab" id="fabAdd" aria-label="Add" hidden>+</button>
+
+  <nav class="dock-nav" id="dockNav" aria-label="Main navigation" hidden>
+    <div class="dock-glass">
+      <ul class="dock-list" id="dockList">
+        <li class="dock-item-wrap">
+          <button type="button" class="dock-item active" data-dock-action="view" data-view="tasks" aria-current="page">
+            <span class="dock-icon-wrap">
+              <span class="dock-emoji" aria-hidden="true">📝</span>
+            </span>
+            <span class="dock-tooltip" data-i18n="navTasks">משימות</span>
+          </button>
+        </li>
+        <li class="dock-item-wrap">
+          <button type="button" class="dock-item" data-dock-action="view" data-view="exams">
+            <span class="dock-icon-wrap">
+              <span class="dock-emoji" aria-hidden="true">📄</span>
+            </span>
+            <span class="dock-tooltip" data-i18n="navExams">מבחנים</span>
+          </button>
+        </li>
+        <li class="dock-item-wrap">
+          <button type="button" class="dock-item" data-dock-action="view" data-view="schedule">
+            <span class="dock-icon-wrap">
+              <span class="dock-emoji" aria-hidden="true">📘</span>
+            </span>
+            <span class="dock-tooltip" data-i18n="navSchedule">מערכת שעות</span>
+          </button>
+        </li>
+        <li class="dock-item-wrap">
+          <button type="button" class="dock-item" data-dock-action="view" data-view="friends">
+            <span class="dock-icon-wrap">
+              <span class="dock-emoji" aria-hidden="true">👥</span>
+            </span>
+            <span class="dock-tooltip" data-i18n="navFriends">חברים</span>
+          </button>
+        </li>
+        <li class="dock-item-wrap">
+          <button type="button" class="dock-item" data-dock-action="calendar" id="dockCalendarBtn">
+            <span class="dock-icon-wrap">
+              <span class="dock-emoji" aria-hidden="true">📅</span>
+            </span>
+            <span class="dock-tooltip" data-i18n="calendarBtn">לוח שנה</span>
+          </button>
+        </li>
+        <li class="dock-item-wrap">
+          <button type="button" class="dock-item" data-dock-action="settings" id="dockSettingsBtn" aria-expanded="false" aria-controls="settingsModalOverlay">
+            <span class="dock-icon-wrap">
+              <span class="dock-emoji" aria-hidden="true">⚙️</span>
+            </span>
+            <span class="dock-tooltip" data-i18n="dockSettings">הגדרות</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>
