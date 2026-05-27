@@ -49,10 +49,3 @@ student-dashboard/
 - User data is stored **only in the browser** on the device used to sign up.  
 - Suitable as a portfolio / coursework project demonstrating UI, state management, and client-side architecture.
 
-## Author
-
-**Your Name** — [LinkedIn](https://www.linkedin.com/in/your-profile) · [GitHub](https://github.com/lenovo-ux)
-
----
-
-*Replace "Your Name" and profile links above before sharing on LinkedIn.*
